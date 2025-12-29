@@ -3,7 +3,7 @@
  * Plugin Name: HelloNote
  * Plugin URI: https://gobird.io
  * Description: A simple WordPress plugin for managing admin notes with a custom admin page and database table.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: trueqap, gobird.io
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('HELLONOTE_VERSION', '1.0.0');
+define('HELLONOTE_VERSION', '1.0.1');
 define('HELLONOTE_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('HELLONOTE_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('HELLONOTE_PLUGIN_BASENAME', plugin_basename(__FILE__));
