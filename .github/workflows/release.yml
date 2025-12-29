@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Get version from tag
+        id: get_version
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          VERSION="${REF#refs/tags/v}"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build plugin zip
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
+        run: |
+          mkdir -p build
+          rsync -av --exclude='.git' \
+                    --exclude='.github' \
+                    --exclude='.gitignore' \
+                    --exclude='build' \
+                    --exclude='*.zip' \
+                    --exclude='.DS_Store' \
+                    --exclude='Thumbs.db' \
+                    --exclude='.vscode' \
+                    --exclude='.idea' \
+                    --exclude='composer.json' \
+                    --exclude='composer.lock' \
+                    --exclude='*.md' \
+                    ./ build/hellonote/
+          cd build && zip -r "hellonote-${VERSION}.zip" hellonote/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/hellonote-${{ steps.get_version.outputs.VERSION }}.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
